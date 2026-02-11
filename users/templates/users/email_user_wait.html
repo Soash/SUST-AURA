@@ -1,0 +1,10 @@
+{% autoescape off %}
+Hi {{ user.first_name }},
+
+Requested on: {{ timestamp|date:'F j, Y, g:i a' }}
+
+Your email has been verified. However, account approval is currently manual.
+Please wait while our administrators review your account. You will receive an email once your account is approved.
+
+Thank you for your patience.
+{% endautoescape %}

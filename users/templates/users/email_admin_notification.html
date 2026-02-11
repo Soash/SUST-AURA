@@ -1,0 +1,15 @@
+{% autoescape off %}
+Hello Staff,
+
+Requested on: {{ timestamp|date:'F j, Y, g:i a' }}
+
+A new user has verified their email and is waiting for approval.
+
+User Details:
+Username: {{ user.username }}
+Email: {{ user.email }}
+Name: {{ user.first_name }} {{ user.last_name }}
+
+Please login to the admin panel or approval dashboard to approve them.
+Approval Dashboard: http://{{ domain }}{% url 'staff_approval_list' %}
+{% endautoescape %}

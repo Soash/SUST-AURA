@@ -1,0 +1,11 @@
+{% autoescape off %}
+Hi {{ user.first_name }},
+
+Requested on: {{ timestamp|date:'F j, Y, g:i a' }}
+
+Your account has been approved by the administration. You can now login to your account.
+
+Login here: {{ domain }}{% url 'user_login' %}
+
+Welcome to SUST Omics!
+{% endautoescape %}
