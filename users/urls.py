@@ -15,5 +15,6 @@ urlpatterns = [
     
     path('staff/approvals/', views.staff_approval_list, name='staff_approval_list'),
     path('staff/approve/<int:user_id>/', views.approve_user, name='approve_user'),
+    path('staff/reject/<int:user_id>/', views.reject_user, name='reject_user'),
 ]
 

@@ -193,6 +193,32 @@ def approve_user(request, user_id):
     messages.success(request, f"User {user.username} approved successfully.")
     return redirect("staff_approval_list")
 
+# Reject User
+@login_required
+@user_passes_test(lambda u: u.is_staff)
+def reject_user(request, user_id):
+    user = get_object_or_404(CustomUser, pk=user_id)
+    
+    # Send rejection email
+    current_site = get_current_site(request)
+    mail_subject = "Account Application Update"
+    message = render_to_string(
+        "users/account_rejected_email.html",
+        {
+            "user": user,
+            "domain": current_site.domain,
+            "timestamp": timezone.now(),
+        },
+    )
+    to_email = user.email
+    email = EmailMessage(mail_subject, message, to=[to_email])
+    email.send()
+
+    username = user.username
+    user.delete()
+    messages.warning(request, f"User {username} has been rejected and removed.")
+    return redirect("staff_approval_list")
+
 # Password Reset
 def password_reset(request):
     if request.method == "POST":
