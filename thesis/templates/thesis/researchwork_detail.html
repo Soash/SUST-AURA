@@ -1,0 +1,67 @@
+{% extends 'core/base.html' %}
+
+{% block main %}
+<div class="container mt-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'thesis_list' %}">Research Works</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ work.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h1 class="card-title mb-3">{{ work.title }}</h1>
+
+            <div class="mb-4">
+                <span class="badge bg-primary me-2">{{ work.get_work_type_display }}</span>
+                <span class="text-muted">Uploaded on {{ work.uploaded_at|date:"F d, Y" }}</span>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5 class="text-muted border-bottom pb-2">Authors</h5>
+                    <ul class="list-unstyled">
+                        {% for author in work.authors.all %}
+                        <li>
+                            <a href="{% url 'profile_view' author.username %}" class="text-decoration-none">
+                                <i class="bi bi-person-fill me-2"></i>{{ author.first_name }} {{ author.last_name }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="text-muted border-bottom pb-2">Supervisor</h5>
+                    <p><i class="bi bi-person-badge me-2"></i>{{ work.supervisor_name }}</p>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h5 class="text-muted border-bottom pb-2">Abstract</h5>
+                <p class="card-text" style="white-space: pre-wrap;">{{ work.abstract }}</p>
+            </div>
+
+            {% if work.link %}
+            <div class="mb-4">
+                <h5 class="text-muted border-bottom pb-2">Project Link</h5>
+                <a href="{{ work.link }}" target="_blank" class="btn btn-outline-primary">
+                    <i class="bi bi-link-45deg"></i> View Project Resource
+                </a>
+            </div>
+            {% endif %}
+
+        </div>
+        <div class="card-footer bg-light text-end">
+            {% if user in work.authors.all %}
+            <a href="{% url 'thesis_delete' work.pk %}" class="btn btn-sm btn-outline-danger me-2">
+                <i class="bi bi-trash"></i> Delete
+            </a>
+            {% endif %}
+            <button class="btn btn-sm btn-outline-secondary" onclick="window.print()">
+                <i class="bi bi-printer"></i> Print Details
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}

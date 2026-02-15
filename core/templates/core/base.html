@@ -123,7 +123,7 @@
                         <a class="nav-link" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Link1</a>
+                        <a class="nav-link" href="{% url 'thesis_list' %}">Thesis</a>
                     </li>
                     {% if user.is_authenticated %}
                     {% if user.is_staff %}

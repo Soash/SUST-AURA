@@ -3,69 +3,129 @@
 
 {% block main %}
 
-<!-- Hero Section -->
-<section class="py-5">
-  <div class="container text-center">
-    <h1 class="display-5 fw-bold">Welcome to Lorem Ipsum</h1>
-    <p class="lead mt-3">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.
-    </p>
-    <a href="#" class="btn btn-primary btn-lg mt-3">Get Started</a>
-  </div>
-</section>
 
-<!-- Features -->
-<section class="py-5">
-  <div class="container">
-    <div class="row text-center g-4">
-      <div class="col-md-4">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title">Feature One</h5>
-            <p class="card-text">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio.
-            </p>
-          </div>
-        </div>
-      </div>
+<!-- HERO -->
+<section class="py-5 bg-body-tertiary border-bottom">
+  <div class="container py-5 text-center">
+    <div class="mx-auto" style="max-width: 750px;">
+      <h1 class="display-3 fw-bold mb-3">
+        SUST AURA
+      </h1>
+      <p class="lead text-body-secondary mb-4">
+        Archive for University Research & Academics. <br>
+        <small><i>Discover, share and preserve scholarly work.</i></small>
+      </p>
 
-      <div class="col-md-4">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title">Feature Two</h5>
-            <p class="card-text">
-              Praesent libero. Sed cursus ante dapibus diam. Sed nisi.
-            </p>
-          </div>
-        </div>
-      </div>
+      <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+        <a href="{% url 'thesis_list' %}" class="btn btn-primary btn-lg px-4">
+          <i class="bi bi-journal-text me-2"></i>
+          Browse Research
+        </a>
 
-      <div class="col-md-4">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title">Feature Three</h5>
-            <p class="card-text">
-              Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum.
-            </p>
-          </div>
-        </div>
+        {% if not user.is_authenticated %}
+        <a href="{% url 'user_registration' %}" class="btn btn-outline-secondary btn-lg px-4">
+          <i class="bi bi-person-plus me-2"></i>
+          Join Now
+        </a>
+        {% endif %}
       </div>
     </div>
   </div>
 </section>
 
-<!-- Call to Action -->
-<section class="bg-primary text-white py-5">
-  <div class="container text-center">
-    <h2>Ready to build something?</h2>
-    <p class="mt-2">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    </p>
-    <a href="#" class="btn btn-light mt-3">Contact Us</a>
+
+<!-- FEATURES -->
+<section class="py-5">
+  <div class="container">
+    <div class="row g-4">
+
+      <!-- Thesis -->
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0 bg-body-tertiary">
+          <div class="card-body p-4">
+            <div class="mb-3 fs-1 text-primary">
+              <i class="bi bi-journal-text"></i>
+            </div>
+            <h4 class="fw-semibold">Thesis Repository</h4>
+            <p class="text-body-secondary">
+              Explore undergraduate & graduate theses,
+              research papers and departmental projects.
+            </p>
+            <a href="{% url 'thesis_list' %}" class="btn btn-sm btn-outline-primary">
+              Explore →
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profiles -->
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0 bg-body-tertiary">
+          <div class="card-body p-4">
+            <div class="mb-3 fs-1 text-success">
+              <i class="bi bi-people"></i>
+            </div>
+            <h4 class="fw-semibold">Student Profiles</h4>
+            <p class="text-body-secondary">
+              View academic portfolios and connect with
+              researchers and supervisors.
+            </p>
+            {% if user.is_authenticated %}
+            <a href="{% url 'profile_view' user.username %}" class="btn btn-sm btn-outline-success">
+              View Profile →
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Submission -->
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0 bg-body-tertiary">
+          <div class="card-body p-4">
+            <div class="mb-3 fs-1 text-warning">
+              <i class="bi bi-cloud-upload"></i>
+            </div>
+            <h4 class="fw-semibold">Easy Submission</h4>
+            <p class="text-body-secondary">
+              Upload and archive your research
+              securely and professionally.
+            </p>
+            <a href="{% url 'thesis_create' %}" class="btn btn-sm btn-outline-warning">
+              Submit →
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- CTA -->
+<section class="py-5 border-top bg-body-tertiary">
+  <div class="container text-center py-4">
+
+    {% if user.is_authenticated %}
+      <h2 class="fw-bold mb-3">Ready to contribute?</h2>
+      <p class="text-body-secondary mb-4">
+        Share your research and make an academic impact.
+      </p>
+      <a href="{% url 'thesis_create' %}" class="btn btn-primary btn-lg px-4">
+        Submit Your Thesis
+      </a>
+    {% else %}
+      <h2 class="fw-bold mb-3">Join the Academic Community</h2>
+      <p class="text-body-secondary mb-4">
+        Register to access full features and contribute.
+      </p>
+      <a href="{% url 'user_registration' %}" class="btn btn-primary btn-lg px-4">
+        Register / Login
+      </a>
+    {% endif %}
+
   </div>
 </section>
 
 {% endblock main %}
-
-
-

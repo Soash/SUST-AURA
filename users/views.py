@@ -261,9 +261,15 @@ def profile_view(request, username):
 
     # Get last 10 visitors
     recent_visitors = user.visits_received.select_related("visitor")[:10]
+    
+    # Get user's research works (public or if viewing own profile)
+    from thesis.models import ResearchWork
+    user_works = ResearchWork.objects.filter(authors=user).order_by('-uploaded_at')
+    
     context = {
         "user": user,
         "recent_visitors": recent_visitors,
+        "user_works": user_works,
     }
     return render(request, "users/profile.html", context)
 

@@ -1,0 +1,173 @@
+{% extends 'core/base.html' %}
+
+{% block main %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Research Works</h2>
+        <a href="{% url 'thesis_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Add New Work
+        </a>
+    </div>
+
+    <!-- Filter Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <input type="text" name="q" class="form-control" placeholder="Search by title..."
+                            value="{{ request.GET.q }}">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" name="supervisor" class="form-control" placeholder="Supervisor..."
+                            value="{{ request.GET.supervisor }}">
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary w-100 dropdown-toggle text-start text-truncate"
+                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Session
+                            </button>
+                            <ul class="dropdown-menu p-3 w-100" style="max-height: 300px; overflow-y: auto;">
+                                {% for session_val, session_label in sessions %}
+                                <li class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="session"
+                                        value="{{ session_val }}" id="session_{{ forloop.counter }}"
+                                        {% if session_val in selected_sessions %} checked {% endif %}>
+                                    <label class="form-check-label" for="session_{{ forloop.counter }}">
+                                        {{ session_label }}
+                                    </label>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary w-100 dropdown-toggle text-start text-truncate"
+                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Work Type
+                            </button>
+                            <ul class="dropdown-menu p-3 w-100" style="max-height: 300px; overflow-y: auto;">
+                                {% for type_code, type_name in work_types %}
+                                <li class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="work_type"
+                                        value="{{ type_code }}" id="type_{{ type_code }}"
+                                        {% if type_code in selected_work_types %} checked {% endif %}>
+                                    <label class="form-check-label" for="type_{{ type_code }}">
+                                        {{ type_name }}
+                                    </label>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary w-100 dropdown-toggle text-start text-truncate"
+                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Department
+                            </button>
+                            <ul class="dropdown-menu p-3 w-100" style="max-height: 300px; overflow-y: auto;">
+                                {% for dept in departments %}
+                                <li class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="department"
+                                        value="{{ dept.id }}" id="dept_{{ dept.id }}"
+                                        {% if dept.id in selected_departments %} checked {% endif %}>
+                                    <label class="form-check-label" for="dept_{{ dept.id }}">
+                                        {{ dept.name }}
+                                    </label>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 d-grid gap-2 d-md-flex">
+                        <button type="submit" class="btn btn-primary flex-grow-1">Filter</button>
+                        <a href="{% url 'thesis_list' %}" class="btn btn-outline-secondary">Clear</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if works %}
+    <div class="list-group">
+        {% for work in works %}
+        <a href="{% url 'thesis_detail' work.pk %}"
+            class="list-group-item list-group-item-action flex-column align-items-start">
+            <div class="d-flex w-100 justify-content-between align-items-center">
+                <h5 class="mb-1">{{ work.title }}</h5>
+                <div class="d-flex align-items-center gap-2">
+                    <small>{{ work.uploaded_at|date:"M d, Y" }}</small>
+                    <object>
+                        <a href="{% url 'report_thesis' work.pk %}" class="btn btn-outline-warning btn-sm"
+                            title="Report this work">
+                            <i class="bi bi-flag-fill"></i>
+                        </a>
+                    </object>
+                </div>
+            </div>
+            <p class="mb-1 text-truncate" style="max-width: 800px;">{{ work.abstract }}</p>
+            <div class="mt-2">
+                <span class="badge bg-secondary">{{ work.get_work_type_display }}</span>
+                <small class="text-muted ms-2">
+                    Supervisor: {{ work.supervisor_name }}
+                </small>
+            </div>
+
+
+        </a>
+        {% endfor %}
+    </div>
+
+    {# Pagination #}
+    {% if is_paginated %}
+    <nav aria-label="Page navigation" class="m-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link"
+                    href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.work_type %}&work_type={{ request.GET.work_type }}{% endif %}{% if request.GET.department %}&department={{ request.GET.department }}{% endif %}{% if request.GET.supervisor %}&supervisor={{ request.GET.supervisor }}{% endif %}{% if request.GET.session %}&session={{ request.GET.session }}{% endif %}">Previous</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Previous</span>
+            </li>
+            {% endif %}
+
+            {% for i in paginator.page_range %}
+            {% if page_obj.number == i %}
+            <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+            {% else %}
+            <li class="page-item"><a class="page-link"
+                    href="?page={{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.work_type %}&work_type={{ request.GET.work_type }}{% endif %}{% if request.GET.department %}&department={{ request.GET.department }}{% endif %}{% if request.GET.supervisor %}&supervisor={{ request.GET.supervisor }}{% endif %}{% if request.GET.session %}&session={{ request.GET.session }}{% endif %}">{{
+                    i }}</a></li>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link"
+                    href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.work_type %}&work_type={{ request.GET.work_type }}{% endif %}{% if request.GET.department %}&department={{ request.GET.department }}{% endif %}{% if request.GET.supervisor %}&supervisor={{ request.GET.supervisor }}{% endif %}{% if request.GET.session %}&session={{ request.GET.session }}{% endif %}">Next</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Next</span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <div class="alert alert-info">
+        No research works found. Be the first to add one!
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
