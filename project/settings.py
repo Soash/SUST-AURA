@@ -36,7 +36,7 @@ if ENVIRONMENT == 'development':
     # ALLOWED_HOSTS = ['*', '127.0.0.1', 'localhost', 'choice-alien-saved.ngrok-free.app']
 else:
     DEBUG = False
-    ALLOWED_HOSTS = ['*']
+    ALLOWED_HOSTS = ['sustaura.com', 'www.sustaura.com']
 
 # Application definition
 
