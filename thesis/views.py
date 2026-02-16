@@ -58,7 +58,7 @@ def thesis_list(request):
     }
     return render(request, 'thesis/researchwork_list.html', context)
 
-@login_required
+# @login_required
 def thesis_detail(request, pk):
     work = get_object_or_404(ResearchWork, pk=pk)
     context = {'work': work}

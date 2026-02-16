@@ -145,8 +145,8 @@
             <li class="page-item active"><span class="page-link">{{ i }}</span></li>
             {% else %}
             <li class="page-item"><a class="page-link"
-                    href="?page={{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.work_type %}&work_type={{ request.GET.work_type }}{% endif %}{% if request.GET.department %}&department={{ request.GET.department }}{% endif %}{% if request.GET.supervisor %}&supervisor={{ request.GET.supervisor }}{% endif %}{% if request.GET.session %}&session={{ request.GET.session }}{% endif %}">{{
-                    i }}</a></li>
+                    href="?page={{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.work_type %}&work_type={{ request.GET.work_type }}{% endif %}{% if request.GET.department %}&department={{ request.GET.department }}{% endif %}{% if request.GET.supervisor %}&supervisor={{ request.GET.supervisor }}{% endif %}{% if request.GET.session %}&session={{ request.GET.session }}{% endif %}">
+                    {{ i }}</a></li>
             {% endif %}
             {% endfor %}
 
