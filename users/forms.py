@@ -62,9 +62,16 @@ class CustomUserCreationForm(UserCreationForm):
         self.fields['username'].widget.input_type = 'email'
         self.fields['username'].widget.attrs.pop("autofocus", None)
         
+        self.fields['registration_number'].label = "Registration Number"
+        self.fields['registration_number'].help_text = "Enter your 10 digit registration number of Honours (e.g., 2022140101)."
+        self.fields['department'].help_text = "Select your department name of Honours."
+        self.fields['session'].help_text = "Select your session of Honours."
+
+
         self.fields['first_name'].label = "Full Name"
+        self.fields['username'].help_text = "If you have a SUST email address, we encourage you to use it."
         self.fields['social_profile'].help_text = "Enter link to your most active social profile (e.g., LinkedIn, Facebook, Portfolio)."
-        self.fields['whatsapp_number'].help_text = "Enter full phone number with country code (e.g., +8801712345678, +14155552671)."
+        self.fields['whatsapp_number'].help_text = "Enter full phone number with country code (e.g., +8801712345678, +14155552671). If you do not use WhatsApp, please provide an alternative contact method."
         self.fields['student_proof'].help_text = "Upload proof of SUST enrollment (any document, e.g., student ID card, certificate, transcript, testimonial, or bank receipt). Supported formats: JPG, JPEG, PNG. Maximum file size: 5 MB."
 
         self.fields['student_proof'].required = False
