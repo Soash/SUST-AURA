@@ -50,7 +50,9 @@ INSTALLED_APPS = [
     'core',
     'users',
     'thesis',
+    'book',
     'tinymce',
+    'django_seed',
 ]
 
 MIDDLEWARE = [
