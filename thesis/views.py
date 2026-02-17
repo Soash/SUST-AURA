@@ -43,6 +43,17 @@ def thesis_list(request):
     from users.models import Department, CustomUser
     departments = Department.objects.all()
 
+    # Custom Pagination Range (Display 5 pages)
+    page_range = paginator.page_range
+    start_index = max(1, page_obj.number - 2)
+    end_index = min(start_index + 4, paginator.num_pages)
+    
+    # Adjust start if we are near the end to ensure 5 pages are shown if possible
+    if end_index - start_index < 4:
+        start_index = max(1, end_index - 4)
+        
+    custom_page_range = range(start_index, end_index + 1)
+
     context = {
         'works': page_obj,
         'page_obj': page_obj,
@@ -55,6 +66,7 @@ def thesis_list(request):
         'selected_work_types': work_types,
         'selected_departments': [int(id) for id in department_ids if id.isdigit()],
         'selected_sessions': sessions,
+        'custom_page_range': custom_page_range,
     }
     return render(request, 'thesis/researchwork_list.html', context)
 

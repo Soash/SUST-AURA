@@ -22,7 +22,16 @@
     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
 
     {% block style %}
-
+    <style>
+        .navbar-logo {
+            width: 250px;
+        }
+        @media (min-width: 992px) {
+            .navbar-logo {
+                width: 300px;
+            }
+        }
+    </style>
 
     {% endblock style %}
 
@@ -105,8 +114,8 @@
         <div class="container">
             <!-- Logo and Website Name -->
             <a class="navbar-brand d-flex align-items-center" href="/">
-                <img src="{% static 'img/logo-light.png' %}" alt="Logo" width="300" class="me-2 d-block d-dark-none">
-                <img src="{% static 'img/logo-dark.png' %}" alt="Logo" width="300" class="me-2 d-none d-dark-block">
+                <img src="{% static 'img/logo-light.png' %}" alt="Logo" class="me-2 d-block d-dark-none navbar-logo">
+                <img src="{% static 'img/logo-dark.png' %}" alt="Logo" class="me-2 d-none d-dark-block navbar-logo">
             </a>
 
             <!-- Toggler for mobile -->

@@ -103,7 +103,7 @@
             <div class="d-flex w-100 justify-content-between align-items-center">
                 <h5 class="mb-1">{{ work.title }}</h5>
                 <div class="d-flex align-items-center gap-2">
-                    <small>{{ work.uploaded_at|date:"M d, Y" }}</small>
+                    <!-- <small>{{ work.uploaded_at|date:"M d, Y" }}</small> -->
                     <object>
                         <a href="{% url 'report_thesis' work.pk %}" class="btn btn-outline-warning btn-sm"
                             title="Report this work">
@@ -140,7 +140,7 @@
             </li>
             {% endif %}
 
-            {% for i in paginator.page_range %}
+            {% for i in custom_page_range %}
             {% if page_obj.number == i %}
             <li class="page-item active"><span class="page-link">{{ i }}</span></li>
             {% else %}
