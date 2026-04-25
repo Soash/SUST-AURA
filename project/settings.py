@@ -155,9 +155,12 @@ STATIC_URL = 'static/'
 #####
 # Folder where Django will collect all static files (for production)
 MEDIA_URL = 'media/'
-STATIC_ROOT = BASE_DIR/'staticfiles'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_ROOT = BASE_DIR / 'media'
-STATICFILES_DIRS = [BASE_DIR/'static']
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+    BASE_DIR / 'theme' / 'static',  # Compiled Tailwind CSS output
+]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 ####
 
@@ -180,9 +183,16 @@ if not DEBUG:
     X_FRAME_OPTIONS = 'DENY'
     SECURE_CONTENT_TYPE_NOSNIFF = True
 
-    CSRF_TRUSTED_ORIGINS = ['https://choice-alien-saved.ngrok-free.app']
+    CSRF_TRUSTED_ORIGINS = [
+        'https://sustaura.com',
+        'https://www.sustaura.com',
+    ]
 else:
-    CSRF_TRUSTED_ORIGINS = ["https://choice-alien-saved.ngrok-free.app",]
+    CSRF_TRUSTED_ORIGINS = [
+        'https://choice-alien-saved.ngrok-free.app',
+        'http://localhost:8000',
+        'http://127.0.0.1:8000',
+    ]
     
 
 ##### Email settings
