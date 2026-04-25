@@ -56,7 +56,7 @@ class CustomUserCreationForm(UserCreationForm):
             if type(field.widget) in (forms.CheckboxInput, forms.RadioSelect):
                 field.widget.attrs.update({'class': 'h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'})
             elif type(field.widget) == forms.ClearableFileInput:
-                field.widget.attrs.update({'class': 'mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100'})
+                field.widget.attrs.update({'class': 'mt-1 block w-full text-sm text-gray-500 border border-gray-300 rounded-md p-2 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100'})
             else:
                 field.widget.attrs.update({'class': 'mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'})
             field.required = True        
