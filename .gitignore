@@ -1,9 +1,45 @@
+# Python
 __pycache__/
-media/
-*.log
-db.sqlite3
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Environment
 .env
+.env.*
 venv/
+.venv/
+env/
+
+# Django
+db.sqlite3
+*.log
+media/
 staticfiles/
+
+# Tailwind / Node
+theme/static_src/node_modules/
+theme/static_src/package-lock.json
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Antigravity / Local tools
 .antigravity/
 .demo_data.json

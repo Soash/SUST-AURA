@@ -1,64 +1,109 @@
 {% extends 'core/base.html' %}
 
 {% block main %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-6">
+<div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-xl">
+        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Register a new account
+        </h2>
+        <p class="mt-2 text-center text-sm text-gray-600">
+            Already have an account?
+            <a href="{% url 'user_login' %}" class="font-medium text-indigo-600 hover:text-indigo-500">
+                Sign in here
+            </a>
+        </p>
+    </div>
 
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h4 class="mb-4 text-center">
-                        <i class="bi bi-person-plus-fill me-2"></i>
-                        Create an Account
-                    </h4>
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-xl">
+        <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+            <form method="POST" enctype="multipart/form-data" novalidate class="space-y-6">
+                {% csrf_token %}
 
-                    <form method="post" enctype="multipart/form-data" novalidate>
-                        {% csrf_token %}
-
-                        {% for field in form %}
-                        <div class="mb-3">
-                            <label class="form-label">{{ field.label }}</label>
-
-                            {{ field }}
-
-                            {% if field.help_text %}
-                            <div class="form-text">
-                                {{ field.help_text|safe }}
+                {% if form.non_field_errors %}
+                <div class="rounded-md bg-red-50 p-4 mb-4">
+                    <div class="flex">
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">
+                                Please correct the errors below.
+                            </h3>
+                            <div class="mt-2 text-sm text-red-700">
+                                <ul class="list-disc pl-5 space-y-1">
+                                    {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
                             </div>
-                            {% endif %}
-
-                            {% if field.errors %}
-                            <div class="text-danger small">
-                                {{ field.errors|striptags }}
-                            </div>
-                            {% endif %}
                         </div>
-                        {% endfor %}
-
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="bi bi-person-check-fill"></i>
-                            Sign Up
-                        </button>
-                    </form>
-
-                    <hr class="my-4">
-
-                    <p class="text-center mb-0">
-                        Already have an account?
-                        <a href="{% url 'user_login' %}">Login here</a>
-                    </p>
-
-                    <div class="mt-4 text-center border-top pt-3">
-                        <small class="text-muted d-block mb-1">Having trouble?</small>
-                        <small>
-                            Contact Support:
-                            <a href="mailto:support@sustaura.edu" class="text-decoration-none">support@sustaura.com</a>
-                        </small>
                     </div>
                 </div>
-            </div>
+                {% endif %}
 
+                <div class="grid grid-cols-1 gap-y-6">
+                    {% for field in form %}
+                    <div>
+                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            {{ field.label }} {% if field.field.required %}<span class="text-red-500">*</span>{% endif %}
+                        </label>
+                        {% if field.field.widget.input_type == 'password' %}
+                        <div class="mt-1 relative">
+                            {{ field }}
+                            <button type="button"
+                                onclick="togglePassword('{{ field.auto_id }}')"
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+                                tabindex="-1"
+                                aria-label="Toggle password visibility">
+                                <svg id="eye-open-{{ field.auto_id }}" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                <svg id="eye-closed-{{ field.auto_id }}" class="h-5 w-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                                </svg>
+                            </button>
+                        </div>
+                        {% else %}
+                        <div class="mt-1">
+                            {{ field }}
+                        </div>
+                        {% endif %}
+                        {% if field.help_text %}
+                        <p class="mt-2 text-xs text-gray-500">{{ field.help_text }}</p>
+                        {% endif %}
+                        {% if field.errors %}
+                        <p class="mt-2 text-sm text-red-600">
+                            {{ field.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Create Account
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
+{% block script %}
+<script>
+function togglePassword(inputId) {
+    const input = document.getElementById(inputId);
+    const eyeOpen = document.getElementById('eye-open-' + inputId);
+    const eyeClosed = document.getElementById('eye-closed-' + inputId);
+    if (input.type === 'password') {
+        input.type = 'text';
+        eyeOpen.classList.add('hidden');
+        eyeClosed.classList.remove('hidden');
+    } else {
+        input.type = 'password';
+        eyeOpen.classList.remove('hidden');
+        eyeClosed.classList.add('hidden');
+    }
+}
+</script>
+{% endblock script %}
 {% endblock main %}

@@ -1,53 +1,67 @@
 {% extends 'core/base.html' %}
 
 {% block main %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-6">
+<div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-xl">
+        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Edit Profile
+        </h2>
+    </div>
 
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h4 class="mb-4 text-center">
-                        <i class="bi bi-pencil-square me-2"></i>
-                        Edit Profile
-                    </h4>
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-xl">
+        <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+            <form method="POST" enctype="multipart/form-data" novalidate class="space-y-6">
+                {% csrf_token %}
 
-                    <form method="post" novalidate>
-                        {% csrf_token %}
-
-                        {% for field in form %}
-                        <div class="mb-3">
-                            <label class="form-label">{{ field.label }}</label>
-                            {{ field }} {# Bootstrap class already applied in forms.py #}
-
-                            {% if field.help_text %}
-                            <div class="form-text">
-                                {{ field.help_text|safe }}
+                {% if form.non_field_errors %}
+                <div class="rounded-md bg-red-50 p-4 mb-4">
+                    <div class="flex">
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">
+                                Please correct the errors below.
+                            </h3>
+                            <div class="mt-2 text-sm text-red-700">
+                                <ul class="list-disc pl-5 space-y-1">
+                                    {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
                             </div>
-                            {% endif %}
-
-                            {% if field.errors %}
-                            <div class="text-danger small">
-                                {{ field.errors|striptags }}
-                            </div>
-                            {% endif %}
                         </div>
-                        {% endfor %}
-
-                        <div class="d-flex justify-content-between">
-                            <a href="{% url 'profile_view' request.user.username %}" class="btn btn-outline-secondary">
-                                Cancel
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-save"></i> Save Changes
-                            </button>
-                        </div>
-
-                    </form>
-
+                    </div>
                 </div>
-            </div>
+                {% endif %}
 
+                <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                    {% for field in form %}
+                    <div class="{% if field.name == 'student_proof' or field.name == 'social_profile' or field.name == 'whatsapp_number' or field.name == 'password' %}sm:col-span-2{% endif %}">
+                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            {{ field.label }} {% if field.field.required %}<span class="text-red-500">*</span>{% endif %}
+                        </label>
+                        <div class="mt-1">
+                            {{ field }}
+                        </div>
+                        {% if field.help_text %}
+                        <p class="mt-2 text-xs text-gray-500">{{ field.help_text }}</p>
+                        {% endif %}
+                        {% if field.errors %}
+                        <p class="mt-2 text-sm text-red-600">
+                            {{ field.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="pt-4 flex items-center justify-between">
+                    <a href="{% url 'profile_view' user.username %}" class="text-sm font-medium text-gray-500 hover:text-gray-700">
+                        Cancel
+                    </a>
+                    <button type="submit" class="flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

@@ -1,145 +1,143 @@
 {% extends 'core/base.html' %}
 
 {% block main %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-
-            <!-- Profile Card -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h4 class="mb-0">
-                            <i class="bi bi-person-circle me-2"></i>
-                            {{ user.username }}
-                        </h4>
-                        {% if request.user == user %}
-                        <div class="d-flex gap-2">
-                            <a href="{% url 'thesis_create' %}" class="btn btn-primary btn-sm">
-                                <i class="bi bi-plus-lg"></i> Add Research Work
+<div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto space-y-6">
+        
+        <!-- Profile Card -->
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+                <div>
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 flex items-center gap-2">
+                        <svg class="h-6 w-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        {{ user.username }}
+                    </h3>
+                </div>
+                {% if request.user == user %}
+                <div class="flex gap-3">
+                    <a href="{% url 'thesis_create' %}" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
+                        Add Research
+                    </a>
+                    <a href="{% url 'profile_edit' %}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded shadow-sm text-gray-700 bg-white hover:bg-gray-50">
+                        Edit Profile
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
+                <dl class="sm:divide-y sm:divide-gray-200">
+                    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Email</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.email|default:"—" }}</dd>
+                    </div>
+                    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">WhatsApp</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.whatsapp_number|default:"—" }}</dd>
+                    </div>
+                    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Registration No</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.registration_number|default:"—" }}</dd>
+                    </div>
+                    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Department</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.department|default:"—" }}</dd>
+                    </div>
+                    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Session</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.session|default:"—" }}</dd>
+                    </div>
+                    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Gender</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.get_gender_display|default:"—" }}</dd>
+                    </div>
+                    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Blood Group</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.get_blood_display|default:"—" }}</dd>
+                    </div>
+                    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Social Profile</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                            {% if user.social_profile %}
+                            <a href="{{ user.social_profile }}" target="_blank" class="text-indigo-600 hover:text-indigo-500">
+                                {{ user.social_profile }}
                             </a>
-                            <a href="{% url 'profile_edit' %}" class="btn btn-outline-primary btn-sm">
-                                <i class="bi bi-pencil-square"></i> Edit Profile
+                            {% else %}
+                            —
+                            {% endif %}
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Recent Visitors -->
+        {% if recent_visitors %}
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 flex items-center gap-2">
+                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    Recent Visitors
+                </h3>
+            </div>
+            <ul class="divide-y divide-gray-200">
+                {% for visit in recent_visitors %}
+                <li class="px-4 py-4 flex items-center justify-between sm:px-6">
+                    <div class="flex items-center">
+                        <p class="text-sm font-medium text-indigo-600 truncate">
+                            <a href="{% url 'profile_view' visit.visitor.username %}">{{ visit.visitor.username }}</a>
+                        </p>
+                    </div>
+                    <div class="ml-2 flex-shrink-0 flex">
+                        <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            {{ visit.timestamp|date:"M d, Y H:i" }}
+                        </p>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- Research Works -->
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 flex items-center gap-2">
+                    <svg class="h-5 w-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Research Works
+                </h3>
+            </div>
+            {% if user_works %}
+            <ul class="divide-y divide-gray-200">
+                {% for work in user_works %}
+                <li class="px-4 py-4 sm:px-6 hover:bg-gray-50 transition">
+                    <div class="flex items-center justify-between">
+                        <div class="truncate">
+                            <a href="{% url 'thesis_detail' work.pk %}" class="text-sm font-medium text-indigo-600 truncate hover:underline">
+                                {{ work.title }}
+                            </a>
+                            <p class="mt-1 flex items-center text-sm text-gray-500">
+                                {{ work.get_work_type_display }} • {{ work.uploaded_at|date:"M d, Y" }}
+                            </p>
+                        </div>
+                        {% if request.user == user %}
+                        <div class="ml-4 flex-shrink-0 flex items-center gap-4">
+                            <a href="{% url 'thesis_delete' work.pk %}" class="text-red-600 hover:text-red-900 text-sm font-medium flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                Delete
                             </a>
                         </div>
                         {% endif %}
                     </div>
-
-                    <table class="table table-borderless">
-                        <tr>
-                            <th>Email</th>
-                            <td>{{ user.email|default:"—" }}</td>
-                        </tr>
-                        <tr>
-                            <th>WhatsApp</th>
-                            <td>{{ user.whatsapp_number|default:"—" }}</td>
-                        </tr>
-                        <tr>
-                            <th>Registration No</th>
-                            <td>{{ user.registration_number|default:"—" }}</td>
-                        </tr>
-                        <tr>
-                            <th>Department</th>
-                            <td>{{ user.department|default:"—" }}</td>
-                        </tr>
-                        <tr>
-                            <th>Session</th>
-                            <td>{{ user.session|default:"—" }}</td>
-                        </tr>
-                        <tr>
-                            <th>Gender</th>
-                            <td>{{ user.get_gender_display|default:"—" }}</td>
-                        </tr>
-                        <tr>
-                            <th>Blood Group</th>
-                            <td>{{ user.get_blood_display|default:"—" }}</td>
-                        </tr>
-                        <tr>
-                            <th>Social Profile</th>
-                            <td>
-                                {% if user.social_profile %}
-                                <a href="{{ user.social_profile }}" target="_blank">
-                                    {{ user.social_profile }}
-                                </a>
-                                {% else %}
-                                —
-                                {% endif %}
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Recent Visitors -->
-            {% if recent_visitors %}
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title mb-3">
-                        <i class="bi bi-people-fill me-2"></i>
-                        Recent Visitors
-                    </h5>
-                    <ul class="list-group list-group-flush">
-                        {% for visit in recent_visitors %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <a href="{% url 'profile_view' visit.visitor.username %}">
-                                {{ visit.visitor.username }}
-                            </a>
-                            <small class="text-muted">{{ visit.timestamp|date:"M d, Y H:i" }}</small>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div class="px-4 py-5 sm:px-6 text-sm text-gray-500 italic">
+                No research works added yet.
             </div>
             {% endif %}
-
-            <!-- Research Works -->
-            <div class="card shadow-sm mt-4">
-                <div class="card-body">
-                    <h5 class="card-title mb-3">
-                        <i class="bi bi-journal-text me-2"></i>
-                        Research Works
-                    </h5>
-                    {% if user_works %}
-                    <div class="list-group list-group-flush">
-                        {% for work in user_works %}
-                        <div class="list-group-item px-0">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h6 class="mb-1">
-                                        <a href="{% url 'thesis_detail' work.pk %}" class="text-decoration-none">
-                                            {{ work.title }}
-                                        </a>
-                                    </h6>
-                                    <small class="text-muted">
-                                        {{ work.get_work_type_display }} • {{ work.uploaded_at|date:"M d, Y" }}
-                                    </small>
-                                </div>
-                                {% if request.user == user %}
-                                <div class="dropdown">
-                                    <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <a class="dropdown-item text-danger"
-                                                href="{% url 'thesis_delete' work.pk %}">
-                                                <i class="bi bi-trash me-2"></i> Delete
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    {% else %}
-                    <p class="text-muted mb-0">No research works added yet.</p>
-                    {% endif %}
-                </div>
-            </div>
-
         </div>
+
     </div>
 </div>
 {% endblock main %}

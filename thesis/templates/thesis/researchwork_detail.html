@@ -1,65 +1,92 @@
 {% extends 'core/base.html' %}
 
 {% block main %}
-<div class="container mt-5">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'thesis_list' %}">Research Works</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{ work.title }}</li>
+<div class="max-w-4xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+    <nav class="flex mb-8" aria-label="Breadcrumb">
+        <ol class="flex items-center space-x-4">
+            <li>
+                <div class="flex items-center">
+                    <a href="{% url 'thesis_list' %}" class="text-sm font-medium text-gray-500 hover:text-gray-700">Research Works</a>
+                </div>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <svg class="flex-shrink-0 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="ml-4 text-sm font-medium text-gray-900 truncate max-w-xs sm:max-w-md">{{ work.title }}</span>
+                </div>
+            </li>
         </ol>
     </nav>
 
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <h1 class="card-title mb-3">{{ work.title }}</h1>
-
-            <div class="mb-4">
-                <span class="badge bg-primary me-2">{{ work.get_work_type_display }}</span>
-                <span class="text-muted">Uploaded on {{ work.uploaded_at|date:"F d, Y" }}</span>
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+            <h1 class="text-3xl font-extrabold text-gray-900 mb-4">{{ work.title }}</h1>
+            
+            <div class="flex flex-wrap items-center gap-3">
+                <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+                    {{ work.get_work_type_display }}
+                </span>
+                <span class="text-sm text-gray-500 flex items-center">
+                    <svg class="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    Uploaded on {{ work.uploaded_at|date:"F d, Y" }}
+                </span>
             </div>
-
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <h5 class="text-muted border-bottom pb-2">Authors</h5>
-                    <ul class="list-unstyled">
+        </div>
+        
+        <div class="px-4 py-5 sm:p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div>
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 border-b border-gray-200 pb-2 mb-4">Authors</h3>
+                    <ul class="space-y-3">
                         {% for author in work.authors.all %}
                         <li>
-                            <a href="{% url 'profile_view' author.username %}" class="text-decoration-none">
-                                <i class="bi bi-person-fill me-2"></i>{{ author.first_name }} {{ author.last_name }}
+                            <a href="{% url 'profile_view' author.username %}" class="flex items-center text-indigo-600 hover:text-indigo-900 font-medium group">
+                                <svg class="mr-2 h-5 w-5 text-gray-400 group-hover:text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                {{ author.first_name }} {{ author.last_name }}
                             </a>
                         </li>
                         {% endfor %}
                     </ul>
                 </div>
-                <div class="col-md-6">
-                    <h5 class="text-muted border-bottom pb-2">Supervisor</h5>
-                    <p><i class="bi bi-person-badge me-2"></i>{{ work.supervisor_name }}</p>
+                <div>
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 border-b border-gray-200 pb-2 mb-4">Supervisor</h3>
+                    <p class="flex items-center text-gray-700">
+                        <svg class="mr-2 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path></svg>
+                        {{ work.supervisor_name }}
+                    </p>
                 </div>
             </div>
 
-            <div class="mb-4">
-                <h5 class="text-muted border-bottom pb-2">Abstract</h5>
-                <p class="card-text" style="white-space: pre-wrap;">{{ work.abstract }}</p>
+            <div class="mb-8">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 border-b border-gray-200 pb-2 mb-4">Abstract</h3>
+                <div class="prose prose-indigo max-w-none text-gray-700 whitespace-pre-wrap">
+                    {{ work.abstract }}
+                </div>
             </div>
 
             {% if work.link %}
-            <div class="mb-4">
-                <h5 class="text-muted border-bottom pb-2">Project Link</h5>
-                <a href="{{ work.link }}" target="_blank" class="btn btn-outline-primary">
-                    <i class="bi bi-link-45deg"></i> View Project Resource
+            <div class="mt-8">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 border-b border-gray-200 pb-2 mb-4">Project Link</h3>
+                <a href="{{ work.link }}" target="_blank" class="inline-flex items-center px-4 py-2 border border-indigo-300 shadow-sm text-sm font-medium rounded-md text-indigo-700 bg-indigo-50 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                    <svg class="mr-2 -ml-1 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                    View Project Resource
                 </a>
             </div>
             {% endif %}
-
         </div>
-        <div class="card-footer bg-light text-end">
+        
+        <div class="bg-gray-50 px-4 py-4 sm:px-6 flex items-center justify-end gap-3 border-t border-gray-200">
             {% if user in work.authors.all %}
-            <a href="{% url 'thesis_delete' work.pk %}" class="btn btn-sm btn-outline-danger me-2">
-                <i class="bi bi-trash"></i> Delete
+            <a href="{% url 'thesis_delete' work.pk %}" class="inline-flex items-center px-3 py-2 border border-red-300 shadow-sm text-sm leading-4 font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                <svg class="mr-2 -ml-0.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                Delete
             </a>
             {% endif %}
-            <button class="btn btn-sm btn-outline-secondary" onclick="window.print()">
-                <i class="bi bi-printer"></i> Print Details
+            <button type="button" onclick="window.print()" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <svg class="mr-2 -ml-0.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                Print Details
             </button>
         </div>
     </div>

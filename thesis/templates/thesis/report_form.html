@@ -1,43 +1,43 @@
 {% extends 'core/base.html' %}
 
 {% block main %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow border-warning">
-                <div class="card-header bg-warning text-dark">
-                    <h4 class="mb-0">
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                        Report Research Work
-                    </h4>
-                </div>
-                <div class="card-body">
-                    <p class="mb-3">
-                        Reporting: <strong>"{{ work.title }}"</strong>
+<div class="max-w-2xl mx-auto py-10 px-4 sm:px-6 lg:px-8 mt-10">
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg border-2 border-yellow-400">
+        <div class="px-4 py-5 sm:px-6 bg-yellow-400 border-b border-yellow-500">
+            <h4 class="text-lg leading-6 font-bold text-yellow-900 flex items-center gap-2 m-0">
+                <svg class="h-6 w-6 text-yellow-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                Report Research Work
+            </h4>
+        </div>
+        <div class="px-4 py-5 sm:p-6">
+            <p class="mb-4 text-gray-800">
+                Reporting: <strong class="font-bold">"{{ work.title }}"</strong>
+            </p>
+            <p class="text-sm text-gray-500 mb-6">
+                Please provide a reason for your report. This will be reviewed by our administrators.
+            </p>
+
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+
+                <div>
+                    {{ form.reason }}
+                    {% if form.reason.errors %}
+                    <p class="mt-2 text-sm text-red-600">
+                        {{ form.reason.errors.0 }}
                     </p>
-                    <p class="text-muted small">
-                        Please provide a reason for your report. This will be reviewed by our administrators.
-                    </p>
-
-                    <form method="post">
-                        {% csrf_token %}
-
-                        <div class="mb-3">
-                            {{ form.reason }}
-                            {% if form.reason.errors %}
-                            <div class="text-danger small mt-1">
-                                {{ form.reason.errors.0 }}
-                            </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="d-flex gap-2 justify-content-end mt-4">
-                            <a href="{% url 'thesis_list' %}" class="btn btn-secondary">Cancel</a>
-                            <button type="submit" class="btn btn-warning">Submit Report</button>
-                        </div>
-                    </form>
+                    {% endif %}
                 </div>
-            </div>
+
+                <div class="flex gap-3 justify-end mt-8">
+                    <a href="{% url 'thesis_list' %}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                        Cancel
+                    </a>
+                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                        Submit Report
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

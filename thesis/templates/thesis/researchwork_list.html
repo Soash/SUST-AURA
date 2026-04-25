@@ -1,94 +1,87 @@
 {% extends 'core/base.html' %}
 
 {% block main %}
-<div class="container my-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Research Works</h2>
-        <a href="{% url 'thesis_create' %}" class="btn btn-primary">
-            <i class="bi bi-plus-lg"></i> Add New Work
+<div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Research Works</h2>
+        <a href="{% url 'thesis_create' %}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <svg class="mr-2 -ml-1 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            Add New Work
         </a>
     </div>
 
     <!-- Filter Form -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <form method="get">
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <input type="text" name="q" class="form-control" placeholder="Search by title..."
-                            value="{{ request.GET.q }}">
+    <div class="bg-white shadow sm:rounded-lg mb-8 border border-gray-200">
+        <div class="px-4 py-5 sm:p-6">
+            <form method="get" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <input type="text" name="q" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Search by title..." value="{{ request.GET.q }}">
                     </div>
-                    <div class="col-md-6">
-                        <input type="text" name="supervisor" class="form-control" placeholder="Supervisor..."
-                            value="{{ request.GET.supervisor }}">
+                    <div>
+                        <input type="text" name="supervisor" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Supervisor..." value="{{ request.GET.supervisor }}">
                     </div>
                 </div>
 
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary w-100 dropdown-toggle text-start text-truncate"
-                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Session
-                            </button>
-                            <ul class="dropdown-menu p-3 w-100" style="max-height: 300px; overflow-y: auto;">
-                                {% for session_val, session_label in sessions %}
-                                <li class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="session"
-                                        value="{{ session_val }}" id="session_{{ forloop.counter }}"
-                                        {% if session_val in selected_sessions %} checked {% endif %}>
-                                    <label class="form-check-label" for="session_{{ forloop.counter }}">
-                                        {{ session_label }}
-                                    </label>
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary w-100 dropdown-toggle text-start text-truncate"
-                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Work Type
-                            </button>
-                            <ul class="dropdown-menu p-3 w-100" style="max-height: 300px; overflow-y: auto;">
-                                {% for type_code, type_name in work_types %}
-                                <li class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="work_type"
-                                        value="{{ type_code }}" id="type_{{ type_code }}"
-                                        {% if type_code in selected_work_types %} checked {% endif %}>
-                                    <label class="form-check-label" for="type_{{ type_code }}">
-                                        {{ type_name }}
-                                    </label>
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary w-100 dropdown-toggle text-start text-truncate"
-                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Department
-                            </button>
-                            <ul class="dropdown-menu p-3 w-100" style="max-height: 300px; overflow-y: auto;">
-                                {% for dept in departments %}
-                                <li class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="department"
-                                        value="{{ dept.id }}" id="dept_{{ dept.id }}"
-                                        {% if dept.id in selected_departments %} checked {% endif %}>
-                                    <label class="form-check-label" for="dept_{{ dept.id }}">
-                                        {{ dept.name }}
-                                    </label>
-                                </li>
-                                {% endfor %}
-                            </ul>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <!-- Session Dropdown -->
+                    <div class="relative" x-data="{ open: false }">
+                        <button type="button" onclick="this.nextElementSibling.classList.toggle('hidden')" class="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 text-left focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            Session
+                        </button>
+                        <div class="hidden absolute z-50 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                            {% for session_val, session_label in sessions %}
+                            <div class="flex items-center px-4 py-2 hover:bg-gray-100">
+                                <input id="session_{{ forloop.counter }}" name="session" value="{{ session_val }}" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" {% if session_val in selected_sessions %} checked {% endif %}>
+                                <label for="session_{{ forloop.counter }}" class="ml-3 block text-sm text-gray-700">
+                                    {{ session_label }}
+                                </label>
+                            </div>
+                            {% endfor %}
                         </div>
                     </div>
 
-                    <div class="col-md-3 d-grid gap-2 d-md-flex">
-                        <button type="submit" class="btn btn-primary flex-grow-1">Filter</button>
-                        <a href="{% url 'thesis_list' %}" class="btn btn-outline-secondary">Clear</a>
+                    <!-- Work Type Dropdown -->
+                    <div class="relative">
+                        <button type="button" onclick="this.nextElementSibling.classList.toggle('hidden')" class="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 text-left focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            Work Type
+                        </button>
+                        <div class="hidden absolute z-50 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                            {% for type_code, type_name in work_types %}
+                            <div class="flex items-center px-4 py-2 hover:bg-gray-100">
+                                <input id="type_{{ type_code }}" name="work_type" value="{{ type_code }}" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" {% if type_code in selected_work_types %} checked {% endif %}>
+                                <label for="type_{{ type_code }}" class="ml-3 block text-sm text-gray-700">
+                                    {{ type_name }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Department Dropdown -->
+                    <div class="relative">
+                        <button type="button" onclick="this.nextElementSibling.classList.toggle('hidden')" class="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 text-left focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            Department
+                        </button>
+                        <div class="hidden absolute z-50 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                            {% for dept in departments %}
+                            <div class="flex items-center px-4 py-2 hover:bg-gray-100">
+                                <input id="dept_{{ dept.id }}" name="department" value="{{ dept.id }}" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" {% if dept.id in selected_departments %} checked {% endif %}>
+                                <label for="dept_{{ dept.id }}" class="ml-3 block text-sm text-gray-700">
+                                    {{ dept.name }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="flex items-end gap-2">
+                        <button type="submit" class="flex-1 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Filter
+                        </button>
+                        <a href="{% url 'thesis_list' %}" class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Clear
+                        </a>
                     </div>
                 </div>
             </form>
@@ -96,77 +89,106 @@
     </div>
 
     {% if works %}
-    <div class="list-group">
-        {% for work in works %}
-        <a href="{% url 'thesis_detail' work.pk %}"
-            class="list-group-item list-group-item-action flex-column align-items-start">
-            <div class="d-flex w-100 justify-content-between align-items-center">
-                <h5 class="mb-1">{{ work.title }}</h5>
-                <div class="d-flex align-items-center gap-2">
-                    <!-- <small>{{ work.uploaded_at|date:"M d, Y" }}</small> -->
-                    <object>
-                        <a href="{% url 'report_thesis' work.pk %}" class="btn btn-outline-warning btn-sm"
-                            title="Report this work">
-                            <i class="bi bi-flag-fill"></i>
-                        </a>
-                    </object>
-                </div>
-            </div>
-            <p class="mb-1 text-truncate" style="max-width: 800px;">{{ work.abstract }}</p>
-            <div class="mt-2">
-                <span class="badge bg-secondary">{{ work.get_work_type_display }}</span>
-                <small class="text-muted ms-2">
-                    Supervisor: {{ work.supervisor_name }}
-                </small>
-            </div>
-
-
-        </a>
-        {% endfor %}
+    <div class="bg-white shadow overflow-hidden sm:rounded-md border border-gray-200">
+        <ul class="divide-y divide-gray-200">
+            {% for work in works %}
+            <li>
+                <a href="{% url 'thesis_detail' work.pk %}" class="block hover:bg-gray-50 transition-colors">
+                    <div class="px-4 py-4 sm:px-6">
+                        <div class="flex items-center justify-between">
+                            <h5 class="text-lg font-bold text-indigo-600 truncate">{{ work.title }}</h5>
+                            <div class="ml-2 flex-shrink-0 flex">
+                                <object class="pointer-events-auto">
+                                    <a href="{% url 'report_thesis' work.pk %}" class="text-yellow-500 hover:text-yellow-600 p-1" title="Report this work">
+                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"></path></svg>
+                                    </a>
+                                </object>
+                            </div>
+                        </div>
+                        <div class="mt-2 sm:flex sm:justify-between">
+                            <div class="sm:flex">
+                                <p class="flex items-center text-sm text-gray-500 truncate max-w-3xl">
+                                    {{ work.abstract }}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                    {{ work.get_work_type_display }}
+                                </span>
+                                <span class="text-sm text-gray-500 flex items-center">
+                                    <svg class="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                    {{ work.supervisor_name }}
+                                </span>
+                            </div>
+                            <div class="text-sm text-gray-500 flex items-center">
+                                <svg class="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                {{ work.uploaded_at|date:"M d, Y" }}
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
     </div>
 
     {# Pagination #}
     {% if is_paginated %}
-    <nav aria-label="Page navigation" class="m-4">
-        <ul class="pagination justify-content-center">
+    <nav class="mt-8 flex items-center justify-center" aria-label="Pagination">
+        <div class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
             {% if page_obj.has_previous %}
-            <li class="page-item">
-                <a class="page-link"
-                    href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.work_type %}&work_type={{ request.GET.work_type }}{% endif %}{% if request.GET.department %}&department={{ request.GET.department }}{% endif %}{% if request.GET.supervisor %}&supervisor={{ request.GET.supervisor }}{% endif %}{% if request.GET.session %}&session={{ request.GET.session }}{% endif %}">Previous</a>
-            </li>
+            <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.work_type %}&work_type={{ request.GET.work_type }}{% endif %}{% if request.GET.department %}&department={{ request.GET.department }}{% endif %}{% if request.GET.supervisor %}&supervisor={{ request.GET.supervisor }}{% endif %}{% if request.GET.session %}&session={{ request.GET.session }}{% endif %}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                <span class="sr-only">Previous</span>
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            </a>
             {% else %}
-            <li class="page-item disabled">
-                <span class="page-link">Previous</span>
-            </li>
+            <span class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-gray-100 text-sm font-medium text-gray-400 cursor-not-allowed">
+                <span class="sr-only">Previous</span>
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            </span>
             {% endif %}
 
             {% for i in custom_page_range %}
-            {% if page_obj.number == i %}
-            <li class="page-item active"><span class="page-link">{{ i }}</span></li>
-            {% else %}
-            <li class="page-item"><a class="page-link"
-                    href="?page={{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.work_type %}&work_type={{ request.GET.work_type }}{% endif %}{% if request.GET.department %}&department={{ request.GET.department }}{% endif %}{% if request.GET.supervisor %}&supervisor={{ request.GET.supervisor }}{% endif %}{% if request.GET.session %}&session={{ request.GET.session }}{% endif %}">
-                    {{ i }}</a></li>
-            {% endif %}
+                {% if page_obj.number == i %}
+                <span class="z-10 bg-indigo-50 border-indigo-500 text-indigo-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                    {{ i }}
+                </span>
+                {% else %}
+                <a href="?page={{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.work_type %}&work_type={{ request.GET.work_type }}{% endif %}{% if request.GET.department %}&department={{ request.GET.department }}{% endif %}{% if request.GET.supervisor %}&supervisor={{ request.GET.supervisor }}{% endif %}{% if request.GET.session %}&session={{ request.GET.session }}{% endif %}" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                    {{ i }}
+                </a>
+                {% endif %}
             {% endfor %}
 
             {% if page_obj.has_next %}
-            <li class="page-item">
-                <a class="page-link"
-                    href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.work_type %}&work_type={{ request.GET.work_type }}{% endif %}{% if request.GET.department %}&department={{ request.GET.department }}{% endif %}{% if request.GET.supervisor %}&supervisor={{ request.GET.supervisor }}{% endif %}{% if request.GET.session %}&session={{ request.GET.session }}{% endif %}">Next</a>
-            </li>
+            <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.work_type %}&work_type={{ request.GET.work_type }}{% endif %}{% if request.GET.department %}&department={{ request.GET.department }}{% endif %}{% if request.GET.supervisor %}&supervisor={{ request.GET.supervisor }}{% endif %}{% if request.GET.session %}&session={{ request.GET.session }}{% endif %}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                <span class="sr-only">Next</span>
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </a>
             {% else %}
-            <li class="page-item disabled">
-                <span class="page-link">Next</span>
-            </li>
+            <span class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-gray-100 text-sm font-medium text-gray-400 cursor-not-allowed">
+                <span class="sr-only">Next</span>
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </span>
             {% endif %}
-        </ul>
+        </div>
     </nav>
     {% endif %}
 
     {% else %}
-    <div class="alert alert-info">
-        No research works found. Be the first to add one!
+    <div class="rounded-md bg-blue-50 p-4 border border-blue-200">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div class="ml-3">
+                <p class="text-sm font-medium text-blue-800">
+                    No research works found. Be the first to add one!
+                </p>
+            </div>
+        </div>
     </div>
     {% endif %}
 </div>
