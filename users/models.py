@@ -43,7 +43,6 @@ class CustomUser(AbstractUser):
     ]
 
     HOMETOWN_CHOICES = [
-        ('', '-- Select District --'),
         ('Bagerhat', 'Bagerhat'), ('Bandarban', 'Bandarban'), ('Barguna', 'Barguna'),
         ('Barisal', 'Barisal'), ('Bhola', 'Bhola'), ('Bogura', 'Bogura'),
         ('Brahmanbaria', 'Brahmanbaria'), ('Chandpur', 'Chandpur'), ('Chapainawabganj', 'Chapainawabganj'),
