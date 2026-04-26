@@ -282,12 +282,15 @@ def profile_view(request, username):
     
     # Get user's research works (public or if viewing own profile)
     from thesis.models import ResearchWork
+    from publication.models import Publication
     user_works = ResearchWork.objects.filter(authors=user).order_by('-uploaded_at')
-    
+    user_publications = Publication.objects.filter(authors=user, is_public=True).order_by('-year', '-uploaded_at')
+
     context = {
         "user": user,
         "recent_visitors": recent_visitors,
         "user_works": user_works,
+        "user_publications": user_publications,
     }
     return render(request, "users/profile.html", context)
 

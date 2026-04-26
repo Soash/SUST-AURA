@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     'users',
     'thesis',
     'book',
+    'publication',
+    'django.contrib.sitemaps',
     'tinymce',
     'django_seed',
     'tailwind',

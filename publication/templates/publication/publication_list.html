@@ -1,0 +1,179 @@
+{% extends 'core/base.html' %}
+
+{% block main %}
+<div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+
+    <!-- Header -->
+    <div class="flex justify-between items-start mb-8">
+        <div>
+            <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Publications</h2>
+            <p class="mt-1 text-sm text-gray-500">Academic papers, journal articles & conference proceedings</p>
+        </div>
+        {% if user.is_authenticated %}
+        <a href="{% url 'publication_create' %}" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Add Publication
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Search & Filters -->
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-8">
+        <div class="px-4 py-5 sm:p-6">
+            <form method="get" class="flex flex-col sm:flex-row gap-3">
+                <!-- Search -->
+                <div class="flex-grow relative">
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                    <input type="text" name="q" value="{{ query }}"
+                        class="block w-full border border-gray-300 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        placeholder="Search by title, journal, or author...">
+                </div>
+                <!-- Type -->
+                <select name="type" class="border border-gray-300 rounded-lg py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                    <option value="">All Types</option>
+                    {% for code, label in type_choices %}
+                    <option value="{{ code }}" {% if active_type == code %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <!-- Year -->
+                <select name="year" class="border border-gray-300 rounded-lg py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                    <option value="">All Years</option>
+                    {% for y in years %}
+                    {% if y %}
+                    <option value="{{ y }}" {% if active_year == y|stringformat:'s' %}selected{% endif %}>{{ y }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+                <div class="flex gap-2 sm:flex-shrink-0">
+                    <button type="submit" class="flex-1 sm:flex-none inline-flex items-center justify-center px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors">
+                        Filter
+                    </button>
+                    {% if query or active_type or active_year %}
+                    <a href="{% url 'publication_list' %}" class="flex-1 sm:flex-none inline-flex items-center justify-center px-4 py-2.5 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 text-sm font-medium rounded-lg transition-colors">
+                        Clear
+                    </a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Results summary -->
+    {% if query or active_type or active_year %}
+    <p class="text-sm text-gray-500 mb-4">
+        {{ page_obj.paginator.count }} result{{ page_obj.paginator.count|pluralize }} found
+    </p>
+    {% endif %}
+
+    <!-- Publication Cards -->
+    {% if page_obj %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        {% for pub in page_obj %}
+        <a href="{% url 'publication_detail' pub.pk %}" class="group block bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+            <!-- Type colour bar -->
+            <div class="h-1.5
+                {% if pub.pub_type == 'journal' %}bg-indigo-500
+                {% elif pub.pub_type == 'conference' %}bg-violet-500
+                {% elif pub.pub_type == 'book_chapter' %}bg-emerald-500
+                {% elif pub.pub_type == 'preprint' %}bg-amber-500
+                {% elif pub.pub_type == 'technical' %}bg-sky-500
+                {% else %}bg-gray-400{% endif %}">
+            </div>
+            <div class="p-5 flex flex-col h-full">
+                <!-- Badge -->
+                <span class="inline-block mb-3 px-2 py-0.5 rounded-full text-xs font-semibold
+                    {% if pub.pub_type == 'journal' %}bg-indigo-50 text-indigo-700
+                    {% elif pub.pub_type == 'conference' %}bg-violet-50 text-violet-700
+                    {% elif pub.pub_type == 'book_chapter' %}bg-emerald-50 text-emerald-700
+                    {% elif pub.pub_type == 'preprint' %}bg-amber-50 text-amber-700
+                    {% elif pub.pub_type == 'technical' %}bg-sky-50 text-sky-700
+                    {% else %}bg-gray-100 text-gray-600{% endif %}">
+                    {{ pub.get_pub_type_display }}
+                </span>
+
+                <!-- Title -->
+                <h3 class="text-sm font-bold text-gray-900 leading-snug line-clamp-2 mb-2 flex-grow group-hover:text-indigo-600 transition-colors">
+                    {{ pub.title }}
+                </h3>
+
+                <!-- Journal -->
+                {% if pub.journal_name %}
+                <p class="text-xs text-gray-500 italic mb-2 truncate">{{ pub.journal_name }}</p>
+                {% endif %}
+
+                <!-- Authors -->
+                <div class="flex items-center gap-1 text-xs text-gray-500 mb-3">
+                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                    <span class="truncate">
+                        {% for author in pub.authors.all %}{{ author.first_name|default:author.username }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                        {% if pub.external_authors %}{% if pub.authors.all %}, {% endif %}{{ pub.external_authors }}{% endif %}
+                    </span>
+                </div>
+
+                <!-- Footer -->
+                <div class="flex items-center justify-between pt-3 border-t border-gray-100 mt-auto">
+                    {% if pub.year %}
+                    <span class="text-xs font-medium text-gray-500">{{ pub.year }}</span>
+                    {% endif %}
+                    {% if pub.doi %}
+                    <span class="text-xs text-indigo-500 font-mono">DOI</span>
+                    {% endif %}
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.paginator.num_pages > 1 %}
+    <nav class="flex items-center justify-center">
+        <div class="inline-flex rounded-md shadow-sm -space-x-px">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if active_type %}&type={{ active_type }}{% endif %}{% if active_year %}&year={{ active_year }}{% endif %}"
+                class="relative inline-flex items-center px-3 py-2 rounded-l-md border border-gray-300 bg-white text-sm text-gray-500 hover:bg-gray-50 transition-colors">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            </a>
+            {% endif %}
+            {% for i in page_obj.paginator.page_range %}
+            {% if page_obj.number == i %}
+            <span class="z-10 bg-indigo-50 border-indigo-500 text-indigo-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">{{ i }}</span>
+            {% else %}
+            <a href="?page={{ i }}{% if query %}&q={{ query }}{% endif %}{% if active_type %}&type={{ active_type }}{% endif %}{% if active_year %}&year={{ active_year }}{% endif %}"
+                class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium transition-colors">{{ i }}</a>
+            {% endif %}
+            {% endfor %}
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if active_type %}&type={{ active_type }}{% endif %}{% if active_year %}&year={{ active_year }}{% endif %}"
+                class="relative inline-flex items-center px-3 py-2 rounded-r-md border border-gray-300 bg-white text-sm text-gray-500 hover:bg-gray-50 transition-colors">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+            {% endif %}
+        </div>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <div class="text-center py-20">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-indigo-50 flex items-center justify-center">
+            <svg class="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-1">No publications found</h3>
+        <p class="text-gray-500 text-sm mb-4">Try adjusting your filters or be the first to add one.</p>
+        {% if user.is_authenticated %}
+        <a href="{% url 'publication_create' %}" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors">
+            Add Publication
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

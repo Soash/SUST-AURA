@@ -1,0 +1,117 @@
+{% extends 'core/base.html' %}
+
+{% block main %}
+<div class="max-w-4xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+
+    <!-- Back -->
+    <a href="{% url 'publication_list' %}" class="inline-flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-800 mb-6 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        All Publications
+    </a>
+
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <!-- Type bar -->
+        <div class="h-1.5
+            {% if pub.pub_type == 'journal' %}bg-indigo-500
+            {% elif pub.pub_type == 'conference' %}bg-violet-500
+            {% elif pub.pub_type == 'book_chapter' %}bg-emerald-500
+            {% elif pub.pub_type == 'preprint' %}bg-amber-500
+            {% elif pub.pub_type == 'technical' %}bg-sky-500
+            {% else %}bg-gray-400{% endif %}">
+        </div>
+
+        <div class="px-6 py-8 sm:px-10">
+            <!-- Badge + Year -->
+            <div class="flex items-center gap-3 mb-4">
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold
+                    {% if pub.pub_type == 'journal' %}bg-indigo-50 text-indigo-700
+                    {% elif pub.pub_type == 'conference' %}bg-violet-50 text-violet-700
+                    {% elif pub.pub_type == 'book_chapter' %}bg-emerald-50 text-emerald-700
+                    {% elif pub.pub_type == 'preprint' %}bg-amber-50 text-amber-700
+                    {% elif pub.pub_type == 'technical' %}bg-sky-50 text-sky-700
+                    {% else %}bg-gray-100 text-gray-600{% endif %}">
+                    {{ pub.get_pub_type_display }}
+                </span>
+                {% if pub.year %}
+                <span class="text-sm text-gray-500">{{ pub.year }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Title -->
+            <h1 class="text-2xl font-bold text-gray-900 leading-snug mb-4">{{ pub.title }}</h1>
+
+            <!-- Journal -->
+            {% if pub.journal_name %}
+            <p class="text-sm italic text-gray-600 mb-4">
+                <svg class="inline w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                {{ pub.journal_name }}
+            </p>
+            {% endif %}
+
+            <!-- Authors -->
+            <div class="flex flex-wrap items-center gap-2 mb-6">
+                <span class="text-sm text-gray-500 mr-1">Authors:</span>
+                {% for author in pub.authors.all %}
+                <a href="{% url 'profile_view' author.username %}" class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-sm font-medium hover:bg-indigo-100 transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    {{ author.first_name|default:author.username }}
+                </a>
+                {% endfor %}
+                {% if pub.external_authors %}
+                {% for name in pub.external_authors.split:"," %}
+                <span class="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-sm">{{ name|strip }}</span>
+                {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Abstract -->
+            {% if pub.abstract %}
+            <div class="bg-gray-50 rounded-lg p-5 mb-6 border border-gray-100">
+                <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Abstract</h3>
+                <p class="text-sm text-gray-700 leading-relaxed">{{ pub.abstract }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Links -->
+            <div class="flex flex-wrap gap-3 mb-6">
+                {% if pub.doi %}
+                <a href="{{ pub.doi_url }}" target="_blank" rel="noopener"
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                    View via DOI
+                </a>
+                {% endif %}
+                {% if pub.link %}
+                <a href="{{ pub.link }}" target="_blank" rel="noopener"
+                    class="inline-flex items-center gap-2 px-4 py-2 border border-indigo-500 text-indigo-600 hover:bg-indigo-50 text-sm font-medium rounded-lg transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101"/></svg>
+                    External Link
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Meta + Actions -->
+            <div class="flex flex-wrap items-center justify-between gap-4 pt-5 border-t border-gray-100">
+                <p class="text-xs text-gray-400">
+                    Added by <span class="font-medium text-gray-600">{{ pub.uploaded_by.first_name|default:pub.uploaded_by.username }}</span>
+                    on {{ pub.uploaded_at|date:"N j, Y" }}
+                </p>
+                {% if user == pub.uploaded_by or user.is_staff %}
+                <div class="flex gap-2">
+                    <a href="{% url 'publication_edit' pub.pk %}"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                        Edit
+                    </a>
+                    <a href="{% url 'publication_delete' pub.pk %}"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-red-300 text-red-600 text-sm rounded-lg hover:bg-red-50 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        Delete
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

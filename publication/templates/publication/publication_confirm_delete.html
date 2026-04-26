@@ -1,0 +1,26 @@
+{% extends 'core/base.html' %}
+
+{% block main %}
+<div class="max-w-lg mx-auto py-20 px-4">
+    <div class="bg-white rounded-xl border border-red-200 shadow-sm p-8 text-center">
+        <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-red-50 flex items-center justify-center">
+            <svg class="w-7 h-7 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+        </div>
+        <h2 class="text-xl font-bold text-gray-900 mb-2">Delete Publication?</h2>
+        <p class="text-sm text-gray-600 mb-1">This will permanently delete:</p>
+        <p class="text-sm font-semibold text-gray-800 mb-6 italic">"{{ pub.title }}"</p>
+        <form method="post" class="flex justify-center gap-3">
+            {% csrf_token %}
+            <button type="submit" class="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors">
+                Yes, Delete
+            </button>
+            <a href="{% url 'publication_detail' pub.pk %}"
+                class="px-5 py-2.5 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50 transition-colors">
+                Cancel
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

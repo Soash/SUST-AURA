@@ -18,6 +18,9 @@
                     <a href="{% url 'thesis_create' %}" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
                         Add Research
                     </a>
+                    <a href="{% url 'publication_create' %}" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-violet-600 hover:bg-violet-700">
+                        Add Publication
+                    </a>
                     <a href="{% url 'profile_edit' %}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded shadow-sm text-gray-700 bg-white hover:bg-gray-50">
                         Edit Profile
                     </a>
@@ -134,6 +137,51 @@
             {% else %}
             <div class="px-4 py-5 sm:px-6 text-sm text-gray-500 italic">
                 No research works added yet.
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Publications -->
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <div class="px-4 py-5 sm:px-6 border-b border-gray-200 flex items-center justify-between">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 flex items-center gap-2">
+                    <svg class="h-5 w-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
+                    Publications
+                </h3>
+                {% if request.user == user %}
+                <a href="{% url 'publication_create' %}" class="text-xs text-violet-600 hover:text-violet-800 font-medium">+ Add</a>
+                {% endif %}
+            </div>
+            {% if user_publications %}
+            <ul class="divide-y divide-gray-200">
+                {% for pub in user_publications %}
+                <li class="px-4 py-4 sm:px-6 hover:bg-gray-50 transition">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="min-w-0 flex-1">
+                            <a href="{% url 'publication_detail' pub.pk %}" class="text-sm font-medium text-violet-600 hover:underline line-clamp-2">
+                                {{ pub.title }}
+                            </a>
+                            <p class="mt-1 text-xs text-gray-500">
+                                {{ pub.get_pub_type_display }}
+                                {% if pub.journal_name %} &bull; <span class="italic">{{ pub.journal_name }}</span>{% endif %}
+                                {% if pub.year %} &bull; {{ pub.year }}{% endif %}
+                            </p>
+                        </div>
+                        {% if pub.doi %}
+                        <a href="{{ pub.doi_url }}" target="_blank" rel="noopener"
+                            class="flex-shrink-0 text-xs font-mono text-indigo-500 hover:text-indigo-700">
+                            DOI
+                        </a>
+                        {% endif %}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div class="px-4 py-5 sm:px-6 text-sm text-gray-500 italic">
+                No publications added yet.
             </div>
             {% endif %}
         </div>
