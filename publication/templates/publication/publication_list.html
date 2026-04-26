@@ -18,46 +18,64 @@
     </div>
 
     <!-- Search & Filters -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-8">
-        <div class="px-4 py-5 sm:p-6">
-            <form method="get" class="flex flex-col sm:flex-row gap-3">
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm mb-8 overflow-hidden">
+        <div class="p-6">
+            <form method="get" class="space-y-4 sm:space-y-0 sm:flex sm:items-center sm:gap-4">
+                
                 <!-- Search -->
                 <div class="flex-grow relative">
-                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
                         <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
                     </div>
                     <input type="text" name="q" value="{{ query }}"
-                        class="block w-full border border-gray-300 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        class="block w-full border border-gray-200 bg-gray-50 rounded-xl py-2.5 pl-11 pr-4 text-sm text-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                         placeholder="Search by title, journal, or author...">
                 </div>
-                <!-- Type -->
-                <select name="type" class="border border-gray-300 rounded-lg py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
-                    <option value="">All Types</option>
-                    {% for code, label in type_choices %}
-                    <option value="{{ code }}" {% if active_type == code %}selected{% endif %}>{{ label }}</option>
-                    {% endfor %}
-                </select>
-                <!-- Year -->
-                <select name="year" class="border border-gray-300 rounded-lg py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
-                    <option value="">All Years</option>
-                    {% for y in years %}
-                    {% if y %}
-                    <option value="{{ y }}" {% if active_year == y|stringformat:'s' %}selected{% endif %}>{{ y }}</option>
-                    {% endif %}
-                    {% endfor %}
-                </select>
-                <div class="flex gap-2 sm:flex-shrink-0">
-                    <button type="submit" class="flex-1 sm:flex-none inline-flex items-center justify-center px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors">
-                        Filter
-                    </button>
-                    {% if query or active_type or active_year %}
-                    <a href="{% url 'publication_list' %}" class="flex-1 sm:flex-none inline-flex items-center justify-center px-4 py-2.5 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 text-sm font-medium rounded-lg transition-colors">
-                        Clear
-                    </a>
-                    {% endif %}
+
+                <div class="flex flex-col sm:flex-row items-center gap-4">
+                    <!-- Type Dropdown -->
+                    <div class="w-full sm:w-auto relative">
+                        <select name="type" class="appearance-none block w-full sm:w-40 border border-gray-200 bg-gray-50 rounded-xl py-2.5 pl-4 pr-10 text-sm text-gray-700 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors cursor-pointer">
+                            <option value="">All Types</option>
+                            {% for code, label in type_choices %}
+                            <option value="{{ code }}" {% if active_type == code %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </div>
+                    </div>
+
+                    <!-- Year Dropdown -->
+                    <div class="w-full sm:w-auto relative">
+                        <select name="year" class="appearance-none block w-full sm:w-32 border border-gray-200 bg-gray-50 rounded-xl py-2.5 pl-4 pr-10 text-sm text-gray-700 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors cursor-pointer">
+                            <option value="">All Years</option>
+                            {% for y in years %}
+                            {% if y %}
+                            <option value="{{ y }}" {% if active_year == y|stringformat:'s' %}selected{% endif %}>{{ y }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="w-full sm:w-auto flex gap-2">
+                        <button type="submit" class="flex-1 sm:flex-none inline-flex items-center justify-center px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl shadow-sm hover:shadow transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Filter
+                        </button>
+                        {% if query or active_type or active_year %}
+                        <a href="{% url 'publication_list' %}" class="flex-1 sm:flex-none inline-flex items-center justify-center px-5 py-2.5 border border-gray-200 text-gray-600 bg-white hover:bg-gray-50 hover:text-gray-900 text-sm font-semibold rounded-xl shadow-sm hover:shadow transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200">
+                            Clear
+                        </a>
+                        {% endif %}
+                    </div>
                 </div>
+
             </form>
         </div>
     </div>
