@@ -18,6 +18,7 @@ def validate_file_size(file):
 class Department(models.Model):
     name = models.CharField(max_length=100)
     full_name = models.CharField(max_length=100, blank=True, null=True)
+    school = models.ForeignKey('School', on_delete=models.SET_NULL, blank=True, null=True, related_name='departments')
 
     def __str__(self):
         return self.name

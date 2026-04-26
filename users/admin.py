@@ -10,8 +10,9 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
-    list_display = ('name', 'full_name')
+    list_display = ('name', 'full_name', 'school')
     search_fields = ('name', 'full_name')
+    list_filter = ('school',)
 
 @admin.register(School)
 class SchoolAdmin(admin.ModelAdmin):
