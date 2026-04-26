@@ -189,7 +189,7 @@
         <!-- student proof -->
         {% if user.student_proof %}
             <div class="bg-white shadow overflow-hidden sm:rounded-lg inline-block p-4">
-                <img src="{{ user.student_proof.url }}" alt="Student Proof" class="w-48 h-auto object-cover rounded">
+                <img src="{{ user.student_proof.url }}" alt="Student Proof" class="w-48 h-48 object-contain rounded">
             </div>
         {% endif %}
 
