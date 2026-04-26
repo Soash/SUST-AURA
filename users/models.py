@@ -7,6 +7,7 @@ from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ValidationError
 from PIL import Image
 import io
+import secrets
 from django.core.files.base import ContentFile
 
 
@@ -157,6 +158,34 @@ class PrimarySetting(models.Model):
     auto_approve = models.BooleanField(default=False)
 
 
+class PendingRegistration(models.Model):
+    """
+    Temporarily stores signup form data until the user clicks the activation link.
+    The actual CustomUser is only created upon successful activation.
+    """
+    first_name          = models.CharField(max_length=150)
+    username            = models.EmailField(unique=True)          # used as email
+    hashed_password     = models.CharField(max_length=128)
+    registration_number = models.CharField(max_length=50,  blank=True, null=True)
+    department          = models.ForeignKey('Department', null=True, blank=True, on_delete=models.SET_NULL)
+    school              = models.ForeignKey('School',     null=True, blank=True, on_delete=models.SET_NULL)
+    session             = models.CharField(max_length=20,  blank=True, null=True)
+    gender              = models.CharField(max_length=1,   blank=True, null=True)
+    blood               = models.CharField(max_length=3,   blank=True, null=True)
+    hometown            = models.CharField(max_length=50,  blank=True, null=True)
+    whatsapp_number     = models.CharField(max_length=15,  blank=True, null=True)
+    social_profile      = models.URLField(max_length=200,  blank=True, null=True)
+    student_proof       = models.ImageField(upload_to='pending_proofs/', blank=True, null=True)
 
+    token      = models.CharField(max_length=64, unique=True, default=secrets.token_urlsafe)
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    EXPIRY_HOURS = 24
+
+    def is_expired(self):
+        from datetime import timedelta
+        return timezone.now() > self.created_at + timedelta(hours=self.EXPIRY_HOURS)
+
+    def __str__(self):
+        return f"Pending: {self.username}"
 

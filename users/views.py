@@ -9,12 +9,10 @@ from django.utils import timezone
 from django.urls import reverse
 import random
 from django.contrib.sites.shortcuts import get_current_site
-from django.utils.encoding import force_bytes, force_str
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from .tokens import account_activation_token
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import user_passes_test
-from .models import CustomUser, ProfileVisit, PrimarySetting
+from .models import CustomUser, ProfileVisit, PrimarySetting, PendingRegistration
 from .forms import CustomUserCreationForm, CustomUserProfileForm
 from .forms import UserLoginForm
 
@@ -40,125 +38,145 @@ def user_registration(request):
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST, request.FILES)
         if form.is_valid():
-            user = form.save(commit=False)
-            # Deactivate account till it is verified
-            user.is_active = False
-            user.save()
+            to_email = form.cleaned_data.get("username")
 
+            # Remove any stale pending registration for this email
+            PendingRegistration.objects.filter(username=to_email).delete()
+
+            # Store form data temporarily — no real user created yet
+            pending = PendingRegistration(
+                first_name=form.cleaned_data['first_name'],
+                username=to_email,
+                hashed_password=make_password(form.cleaned_data['password1']),
+                registration_number=form.cleaned_data.get('registration_number') or '',
+                department=form.cleaned_data.get('department'),
+                school=form.cleaned_data.get('school'),
+                session=form.cleaned_data.get('session') or '',
+                gender=form.cleaned_data.get('gender') or '',
+                blood=form.cleaned_data.get('blood') or '',
+                hometown=form.cleaned_data.get('hometown') or '',
+                whatsapp_number=form.cleaned_data.get('whatsapp_number') or '',
+                social_profile=form.cleaned_data.get('social_profile') or '',
+            )
+            if form.cleaned_data.get('student_proof'):
+                pending.student_proof = form.cleaned_data['student_proof']
+            pending.save()
+
+            # Send activation email with a link containing the single random token
             current_site = get_current_site(request)
-            mail_subject = "Activate your account."
-
-            domain = current_site.domain
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
-            token = account_activation_token.make_token(user)
-
+            activation_url = request.build_absolute_uri(
+                reverse('activate', kwargs={'token': pending.token})
+            )
+            mail_subject = "Activate your SUST AURA account."
             message = render_to_string(
                 "users/email_user_activation.html",
                 {
-                    "user": user,
-                    "domain": domain,
-                    "uid": uid,
-                    "token": token,
+                    "user": pending,
+                    "domain": current_site.domain,
+                    "activation_url": activation_url,
                     "timestamp": timezone.now(),
                 },
             )
-            # User wants to use the username field as the email address
-            to_email = form.cleaned_data.get("username")
-
-            # Ensure email field is also populated on the user object if needed,
-            # though user.save() was already called above.
-            # If the model expects email in user.email, we might need to update it:
-            if not user.email and "@" in to_email:
-                user.email = to_email
-                user.save()
 
             email = EmailMessage(mail_subject, message, to=[to_email])
             try:
                 sent = email.send()
                 if sent:
                     print(f"\n[SUCCESS] Activation email sent to {to_email}\n")
-                    # messages.success(request, 'Please confirm your email address to complete the registration')
                     return render(request, "users/user_check_email.html", {"email": to_email})
                 else:
-                    print(
-                        f"\n[FAILURE] Activation email failed to send to {to_email}\n"
-                    )
-                    user.delete()
+                    pending.delete()
+                    print(f"\n[FAILURE] Activation email failed to send to {to_email}\n")
                     messages.error(request, f"Failed to send activation email to {to_email}. Please check the email address and try again.")
             except Exception as e:
+                pending.delete()
                 print(f"\n[ERROR] Exception sending email to {to_email}: {e}\n")
-                user.delete()
-                # messages.warning(request, f"An error occurred while sending email: {e}")
                 messages.warning(request, f"An error occurred while sending email to {to_email}. Please try again.")
-            
     else:
         form = CustomUserCreationForm()
 
     return render(request, "users/signup.html", {"form": form})
 
-def activate(request, uidb64, token):
-    User = get_user_model()
+def activate(request, token):
     try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
+        pending = PendingRegistration.objects.get(token=token)
+    except PendingRegistration.DoesNotExist:
+        return render(request, "users/user_activation_invalid.html")
 
-    if user is not None and account_activation_token.check_token(user, token):
-        user.email_verified = True
+    if pending.is_expired():
+        pending.delete()
+        return render(request, "users/user_activation_invalid.html")
+
+    User = get_user_model()
+
+    # Guard: if user already exists (double-click), just redirect
+    if User.objects.filter(username=pending.username).exists():
+        pending.delete()
+        messages.info(request, "Your account is already activated. Please log in.")
+        return redirect("user_login")
+
+    # Create the actual user from pending data
+    user = User(
+        first_name=pending.first_name,
+        username=pending.username,
+        email=pending.username,
+        password=pending.hashed_password,   # already hashed — do NOT use set_password
+        registration_number=pending.registration_number or '',
+        department=pending.department,
+        school=pending.school,
+        session=pending.session or '',
+        gender=pending.gender or '',
+        blood=pending.blood or '',
+        hometown=pending.hometown or '',
+        whatsapp_number=pending.whatsapp_number or '',
+        social_profile=pending.social_profile or '',
+        is_active=False,
+        email_verified=True,
+    )
+    if pending.student_proof:
+        user.student_proof = pending.student_proof
+    user.save()
+    pending.delete()
+
+    # Check Primary Setting for Auto Approval
+    primary_setting = PrimarySetting.objects.first()
+    if primary_setting and primary_setting.auto_approve:
+        user.is_active = True
         user.save()
+        login(request, user)
+        messages.success(request, "Thank you for your email confirmation. You are now logged in.")
+        return redirect("profile_view", username=user.username)
+    else:
+        # Send wait-for-approval email
+        current_site = get_current_site(request)
+        mail_subject = "Account Verification Success - Pending Approval"
+        message = render_to_string(
+            "users/email_user_wait.html",
+            {
+                "user": user,
+                "domain": current_site.domain,
+                "timestamp": timezone.now(),
+            },
+        )
+        email = EmailMessage(mail_subject, message, to=[user.email])
+        email.send()
 
-        # Check Primary Setting for Auto Approval
-        primary_setting = PrimarySetting.objects.first()
-        if primary_setting and primary_setting.auto_approve:
-            user.is_active = True
-            user.save()
-            login(request, user)
-            messages.success(
-                request, "Thank you for your email confirmation. You are now logged in."
-            )
-            return redirect("profile_view", username=user.username)
-        else:
-            # Send wait for approval email
-            current_site = get_current_site(request)
-            mail_subject = "Account Verification Success - Pending Approval"
-            message = render_to_string(
-                "users/email_user_wait.html",
+        # Notify staff
+        staff_emails = settings.STAFF_EMAILS
+        if staff_emails:
+            mail_subject_staff = "New User Waiting for Approval"
+            message_staff = render_to_string(
+                "users/email_admin_notification.html",
                 {
                     "user": user,
                     "domain": current_site.domain,
                     "timestamp": timezone.now(),
                 },
             )
-            to_email = user.email
-            email = EmailMessage(mail_subject, message, to=[to_email])
-            email.send()
+            EmailMessage(mail_subject_staff, message_staff, to=staff_emails).send()
 
-            # Notify Staff
-            staff_emails = settings.STAFF_EMAILS
-            if staff_emails:
-                mail_subject_staff = "New User Waiting for Approval"
-                message_staff = render_to_string(
-                    "users/email_admin_notification.html",
-                    {
-                        "user": user,
-                        "domain": current_site.domain,
-                        "timestamp": timezone.now(),
-                    },
-                )
-                email_staff = EmailMessage(
-                    mail_subject_staff, message_staff, to=staff_emails
-                )
-                email_staff.send()
-
-            # Reusing template structure or just render wait message
-            # return render(request, 'users/account_approved_email.html')
-            # Actually, let's render a simple message or redirect to login with a message
-            messages.info(request, "Email verified! Please wait for admin approval.")
-            return redirect("user_login")
-
-    else:
-        return render(request, "users/user_activation_invalid.html")
+        messages.info(request, "Email verified! Please wait for admin approval.")
+        return redirect("user_login")
 
 # Staff Approval List
 @login_required
