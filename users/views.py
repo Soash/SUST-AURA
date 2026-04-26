@@ -50,7 +50,6 @@ def user_registration(request):
                 hashed_password=make_password(form.cleaned_data['password1']),
                 registration_number=form.cleaned_data.get('registration_number') or '',
                 department=form.cleaned_data.get('department'),
-                school=form.cleaned_data.get('school'),
                 session=form.cleaned_data.get('session') or '',
                 gender=form.cleaned_data.get('gender') or '',
                 blood=form.cleaned_data.get('blood') or '',
@@ -123,7 +122,6 @@ def activate(request, token):
         password=pending.hashed_password,   # already hashed — do NOT use set_password
         registration_number=pending.registration_number or '',
         department=pending.department,
-        school=pending.school,
         session=pending.session or '',
         gender=pending.gender or '',
         blood=pending.blood or '',
