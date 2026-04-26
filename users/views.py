@@ -133,7 +133,14 @@ def activate(request, token):
     )
     if pending.student_proof:
         user.student_proof = pending.student_proof
+
+    # This save will generate the WebP and save it cleanly to `student_proofs/xyz.webp`
     user.save()
+
+    # Now clean up the original pending image file from storage
+    if pending.student_proof:
+        pending.student_proof.delete(save=False)
+
     pending.delete()
 
     # Check Primary Setting for Auto Approval

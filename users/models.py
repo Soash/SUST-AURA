@@ -101,7 +101,9 @@ class CustomUser(AbstractUser):
     )
     
     def save(self, *args, **kwargs):
-        if self.student_proof:
+        # Only process if we have a file and it's not already a .webp
+        if self.student_proof and not self.student_proof.name.endswith('.webp'):
+            import os
             MAX_IMAGE_SIZE = (1080, 1080)
             
             img = Image.open(self.student_proof)
@@ -115,10 +117,14 @@ class CustomUser(AbstractUser):
             img.save(output, format='WEBP', quality=90)
             output.seek(0)
 
+            # Get just the base filename without folders
+            base_name = os.path.basename(self.student_proof.name)
+            name_without_ext = os.path.splitext(base_name)[0]
+
             # Replace original file with WebP version
             self.student_proof = ContentFile(
                 output.read(),
-                name=f"{self.student_proof.name.split('.')[0]}.webp"
+                name=f"{name_without_ext}.webp"
             )
 
         super().save(*args, **kwargs)
