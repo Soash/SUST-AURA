@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, Department, PrimarySetting
+from .models import CustomUser, Department, School, PrimarySetting
 
 
 @admin.register(CustomUser)
@@ -12,6 +12,11 @@ class CustomUserAdmin(UserAdmin):
 class DepartmentAdmin(admin.ModelAdmin):
     list_display = ('name', 'full_name')
     search_fields = ('name', 'full_name')
+
+@admin.register(School)
+class SchoolAdmin(admin.ModelAdmin):
+    list_display = ('name', 'short_name')
+    search_fields = ('name', 'short_name')
 
 
 @admin.register(PrimarySetting)

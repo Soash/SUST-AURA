@@ -22,6 +22,17 @@ class Department(models.Model):
     def __str__(self):
         return self.name
 
+
+class School(models.Model):
+    name = models.CharField(max_length=200)
+    short_name = models.CharField(max_length=50, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+
+
+
 class CustomUser(AbstractUser):
     GENDER_CHOICES = [
         ('M', 'Male'),
@@ -71,6 +82,7 @@ class CustomUser(AbstractUser):
     social_profile = models.URLField(max_length=200, blank=True, null=True)
     registration_number = models.CharField(max_length=50, blank=True, null=True)
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, blank=True, null=True)
+    school = models.ForeignKey('School', on_delete=models.SET_NULL, blank=True, null=True)
     hometown = models.CharField(max_length=50, choices=HOMETOWN_CHOICES, blank=True, null=True)
 
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True, null=True)
