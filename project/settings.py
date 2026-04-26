@@ -152,16 +152,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
 
 #####
 # Folder where Django will collect all static files (for production)
-MEDIA_URL = 'media/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_ROOT = BASE_DIR / 'media'
 if not DEBUG:
     MEDIA_ROOT = "/home/sustaur1/sustaura.com/media"
-    
+
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
     BASE_DIR / 'theme' / 'static',  # Compiled Tailwind CSS output
