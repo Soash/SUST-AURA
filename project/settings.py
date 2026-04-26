@@ -159,6 +159,9 @@ STATIC_URL = 'static/'
 MEDIA_URL = 'media/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_ROOT = BASE_DIR / 'media'
+if not DEBUG:
+    MEDIA_ROOT = "/home/sustaur1/sustaura.com/media"
+    
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
     BASE_DIR / 'theme' / 'static',  # Compiled Tailwind CSS output
