@@ -25,7 +25,6 @@ class Department(models.Model):
 
 class School(models.Model):
     name = models.CharField(max_length=200)
-    short_name = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
         return self.name

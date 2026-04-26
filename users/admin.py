@@ -15,8 +15,8 @@ class DepartmentAdmin(admin.ModelAdmin):
 
 @admin.register(School)
 class SchoolAdmin(admin.ModelAdmin):
-    list_display = ('name', 'short_name')
-    search_fields = ('name', 'short_name')
+    list_display = ('name',)
+    search_fields = ('name',)
 
 
 @admin.register(PrimarySetting)
