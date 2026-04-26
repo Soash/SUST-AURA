@@ -592,6 +592,9 @@
   .h-16 {
     height: calc(var(--spacing) * 16);
   }
+  .h-48 {
+    height: calc(var(--spacing) * 48);
+  }
   .h-\[400px\] {
     height: 400px;
   }
@@ -600,9 +603,6 @@
   }
   .h-\[700px\] {
     height: 700px;
-  }
-  .h-auto {
-    height: auto;
   }
   .h-full {
     height: 100%;
@@ -696,9 +696,6 @@
   }
   .max-w-7xl {
     max-width: var(--container-7xl);
-  }
-  .max-w-full {
-    max-width: 100%;
   }
   .max-w-lg {
     max-width: var(--container-lg);
@@ -1294,8 +1291,8 @@
   .bg-clip-text {
     background-clip: text;
   }
-  .object-cover {
-    object-fit: cover;
+  .object-contain {
+    object-fit: contain;
   }
   .p-1 {
     padding: calc(var(--spacing) * 1);
