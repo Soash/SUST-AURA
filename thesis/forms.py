@@ -18,17 +18,21 @@ class ResearchWorkForm(forms.ModelForm):
     class Meta:
         model = ResearchWork
         fields = ['title', 'abstract', 'work_type', 'supervisor_name', 'link', 'embargo_until', 'is_public']
+        labels = {
+            'supervisor_name': 'Supervisor(s) Name',
+            'work_type': 'Research Type',
+        }
         widgets = {
             'title':           forms.TextInput(attrs={'class': SELECT_CLASS, 'placeholder': 'Enter title'}),
             'abstract':        forms.Textarea(attrs={'class': SELECT_CLASS, 'rows': 5, 'placeholder': 'Enter abstract'}),
             'work_type':       forms.Select(attrs={'class': SELECT_CLASS}),
-            'supervisor_name': forms.TextInput(attrs={'class': SELECT_CLASS, 'placeholder': 'Supervisor Name'}),
+            'supervisor_name': forms.TextInput(attrs={'class': SELECT_CLASS, 'placeholder': 'Supervisor(s) Name'}),
             'link':            forms.URLInput(attrs={'class': SELECT_CLASS, 'placeholder': 'Project/Thesis Link'}),
             'embargo_until':   forms.DateInput(attrs={'class': SELECT_CLASS, 'type': 'date'}),
             # is_public intentionally omitted — overridden above as TypedChoiceField
         }
         help_texts = {
-            'supervisor_name': 'Enter the name of your research supervisor (e.g., Prof. Dr. John Doe).',
+            'supervisor_name': 'Enter the name(s) of your research supervisor(s). For multiple supervisors, separate their names with commas (e.g., Prof. Dr. John Doe, Dr. Jane Smith).',
             'link':            'Upload your thesis/project file to Google Drive, set access to "Anyone with the link", and paste the link here.',
             'embargo_until':   'Optional. Hide the document link until this date (e.g. for journal publication delays). Leave blank for immediate access.',
         }
@@ -44,3 +48,5 @@ class ReportForm(forms.ModelForm):
                 'placeholder': 'Please explain why you are reporting this work...'
             }),
         }
+
+
