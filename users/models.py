@@ -117,14 +117,14 @@ class CustomUser(AbstractUser):
             img.save(output, format='WEBP', quality=90)
             output.seek(0)
 
-            # Get just the base filename without folders
-            base_name = os.path.basename(self.student_proof.name)
-            name_without_ext = os.path.splitext(base_name)[0]
+            # Generate unique filename using timestamp
+            import time
+            timestamp = int(time.time() * 1000)
 
             # Replace original file with WebP version
             self.student_proof = ContentFile(
                 output.read(),
-                name=f"{name_without_ext}.webp"
+                name=f"proof_{timestamp}.webp"
             )
 
         super().save(*args, **kwargs)
